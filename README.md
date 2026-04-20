@@ -123,7 +123,7 @@ python workflows/acquisition/collect_dataset_ui.py
 
 ### 6) 训练（20帧展开为20条单帧样本）
 
-采集后可直接运行训练脚本（2层 MLP 回归 `theta0/theta1`）：
+采集后可直接运行训练脚本（残差 MLP 回归 `theta0/theta1`）：
 
 ```bash
 python -m workflows.training.train_single_frame_mlp \
@@ -155,7 +155,7 @@ workflows/
 │   └── dataset_writer.py      # 训练友好的样本落盘
 ├── training/
 │   ├── single_frame_dataset.py      # 读取样本并按帧展开
-│   └── train_single_frame_mlp.py    # 2层MLP训练脚本
+│   └── train_single_frame_mlp.py    # 残差MLP训练脚本
 └── validation/
     ├── infer_single_frame_mlp.py    # 推理与快速验证
     └── validate_predict_ui.py       # 验证UI

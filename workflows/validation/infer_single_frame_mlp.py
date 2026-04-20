@@ -147,7 +147,7 @@ def demo_predict_on_npz(model_path: str, sample_npz: str, frame_index: int = 0) 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="单帧MLP推理/快速验证")
+    parser = argparse.ArgumentParser(description="单帧残差MLP推理/快速验证（兼容历史MLP格式）")
     parser.add_argument("--model", required=True, help="single_frame_mlp_model.npz 路径")
     parser.add_argument("--sample-npz", help="可选：用于快速验证的 sample_xxxxxx.npz")
     parser.add_argument("--frame-index", type=int, default=0)
@@ -156,7 +156,7 @@ def main() -> None:
     if args.sample_npz:
         demo_predict_on_npz(args.model, args.sample_npz, args.frame_index)
     else:
-        print("已加载模型，可在代码中使用 SingleFrameMLP.predict(...) 做在线推理。")
+        print("已加载模型，可在代码中使用 SingleFrameMLP.predict(...) 做在线推理（支持残差MLP与历史MLP）。")
 
 
 if __name__ == "__main__":
