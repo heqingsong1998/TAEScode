@@ -14,6 +14,7 @@
 ├── apps/
 │   ├── __init__.py
 │   ├── debug_array_sensor_3d.py # 阵列触觉传感器3D显示
+│   ├── debug_sensor.py          # 六轴传感器调试
 │   ├── debug_motion.py         # LTSMC 运动控制调试
 │   └── debug_torque_motor.py   # 力矩电机调试 UI
 ├── config/
@@ -44,6 +45,18 @@
 │       ├── base.py
 │       ├── torque_card.py
 │       └── sdk_standalone-main-V4/
+├── workflows/
+│   ├── acquisition/
+│   │   ├── collect_dataset_ui.py
+│   │   └── dataset_writer.py
+│   ├── training/
+│   │   ├── single_frame_dataset.py
+│   │   └── train_single_frame_mlp.py
+│   └── validation/
+│       ├── infer_single_frame_mlp.py
+│       └── validate_predict_ui.py
+├── datasets/
+│   └── <run_id>/...
 ├── LTSMC.dll
 ├── LTSMC.lib
 └── README.md
@@ -128,12 +141,12 @@ python -m workflows.training.train_single_frame_mlp \
 快速验证推理：
 
 ```bash
-python -m workflows.training.infer_single_frame_mlp \
+python -m workflows.validation.infer_single_frame_mlp \
   --model workflows/training/artifacts/single_frame_mlp_model.npz \
   --sample-npz datasets/<run_id>/samples/sample_000001.npz
 ```
 
-## 建议的三层目录（采集 / 训练 / 验证）
+## 当前 workflows 目录（采集 / 训练 / 验证）
 
 ```text
 workflows/
@@ -141,12 +154,11 @@ workflows/
 │   ├── collect_dataset_ui.py  # 采集UI（当前可用）
 │   └── dataset_writer.py      # 训练友好的样本落盘
 ├── training/
-│   ├── train_ui_stub.py             # 训练入口（转发到训练脚本）
 │   ├── single_frame_dataset.py      # 读取样本并按帧展开
-│   ├── train_single_frame_mlp.py    # 2层MLP训练脚本
-│   └── infer_single_frame_mlp.py    # 推理与快速验证
+│   └── train_single_frame_mlp.py    # 2层MLP训练脚本
 └── validation/
-    └── validate_ui_stub.py    # 验证层入口（占位）
+    ├── infer_single_frame_mlp.py    # 推理与快速验证
+    └── validate_predict_ui.py       # 验证UI
 ```
 
 ## 配置说明
