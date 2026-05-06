@@ -221,6 +221,59 @@ sensor:
         # normal: []
 
 
+  proximity_sensor:
+    serial:
+      port: "COM1"
+      baud: 115200
+      timeout: 0.03
+    frame:
+      head: [0x5A, 0x20, 0x00, 0x80, 0x00, 0x01, 0x23]
+      tail: 0xA5
+      size: 40
+      fields:
+        - fx1
+        - fy1
+        - fz1
+        - mx1
+        - my1
+        - jjj1_1
+        - jjj2_1
+        - fx2
+        - fy2
+        - fz2
+        - mx2
+        - my2
+        - jjj1_2
+        - jjj2_2
+        - jjj_invalid_1
+        - jjj_invalid_2
+    processing:
+      proximity_channels: [jjj1_1, jjj2_1, jjj1_2, jjj2_2]
+      distance_min_value: 1.0e-10
+      calibration:
+        jjj1_1: {a: 1.05, b: -9.737, c: 22.41}
+        jjj2_1: {a: 0.9062, b: -8.784, c: 20.85}
+        jjj1_2: {a: 0.8235, b: -8.199, c: 19.83}
+        jjj2_2: {a: 1.142, b: -10.33, c: 23.27}
+    commands:
+      init:
+        delay_ms: 50
+        frames:
+          - "49 3B 42 57 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 45 2E"
+          - "49 3B 44 57 01 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 45 2E"
+      zero: "5A 08 04 00 00 FF FE A4 02 01 00 00 00 00 B7 A5"
+    collection:
+      pitch_min: -3.0
+      pitch_max: 3.0
+      pitch_step: 1.0
+      roll_min: -3.0
+      roll_max: 3.0
+      roll_step: 1.0
+      start_distance_min_mm: 1.0
+      start_distance_max_mm: 7.0
+      stop_distance_mm: 1.0
+
+
 torque_motor:
   port: "\\\\.\\COM17"
   baud: 115200
