@@ -1,0 +1,4 @@
+Speed/mm/s,No. seq.,d1 RMSE/mm,d2 RMSE/mm,d3 RMSE/mm,d4 RMSE/mm,Distance mean RMSE/mm,Pitch RMSE/deg,Roll RMSE/deg,Angle mean RMSE/deg
+0.5,33,0.062,0.051,0.058,0.059,0.057,0.124,0.079,0.101
+0.7,33,0.055,0.043,0.052,0.050,0.050,0.127,0.069,0.098
+0.9,33,0.053,0.040,0.045,0.046,0.046,0.082,0.064,0.073

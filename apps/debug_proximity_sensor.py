@@ -128,6 +128,7 @@ class ProximityCalibrationWindow(QtWidgets.QWidget):
         self.curves = {}
         self.curve_data = {name: [] for name in PROXIMITY_CHANNELS}
         self.plot_window: Optional[pg.GraphicsLayoutWidget] = None
+        self._torque_status_error_logged = False
 
         self.setWindowTitle("接近觉传感器标定")
         self.resize(1180, 760)
@@ -137,6 +138,10 @@ class ProximityCalibrationWindow(QtWidgets.QWidget):
         self.sig_status.connect(self.status_label.setText)
         self.sig_log.connect(self._append_log)
         self.sig_calib_state.connect(self._update_calib_state)
+
+        self.torque_status_timer = QtCore.QTimer(self)
+        self.torque_status_timer.timeout.connect(self.refresh_torque_status)
+        self.torque_status_timer.start(300)
 
         self.acq_thread = threading.Thread(target=self._acquire_loop, daemon=True)
         self.acq_thread.start()
@@ -212,6 +217,18 @@ class ProximityCalibrationWindow(QtWidgets.QWidget):
         self.btn_torque_abs_move = QtWidgets.QPushButton("力控电机绝对位移")
         self.btn_torque_abs_move.clicked.connect(self.move_torque_abs)
 
+        self.torque_pos_edit = QtWidgets.QLineEdit("未连接")
+        self.torque_force_edit = QtWidgets.QLineEdit("未连接")
+        self.torque_vel_edit = QtWidgets.QLineEdit("未连接")
+        self.torque_moving_edit = QtWidgets.QLineEdit("未连接")
+        for edit in (
+            self.torque_pos_edit,
+            self.torque_force_edit,
+            self.torque_vel_edit,
+            self.torque_moving_edit,
+        ):
+            edit.setReadOnly(True)
+
         row = 0
         control_grid.addWidget(self.btn_motion_home, row, 0)
         control_grid.addWidget(self.btn_torque_home, row, 1)
@@ -229,6 +246,16 @@ class ProximityCalibrationWindow(QtWidgets.QWidget):
         control_grid.addWidget(self.torque_abs_dec, row, 3)
         control_grid.addWidget(QtWidgets.QLabel("定位带宽"), row, 4)
         control_grid.addWidget(self.torque_abs_band, row, 5)
+        row += 1
+        control_grid.addWidget(QtWidgets.QLabel("实时位置"), row, 0)
+        control_grid.addWidget(self.torque_pos_edit, row, 1)
+        control_grid.addWidget(QtWidgets.QLabel("实时力"), row, 2)
+        control_grid.addWidget(self.torque_force_edit, row, 3)
+        control_grid.addWidget(QtWidgets.QLabel("实时速度"), row, 4)
+        control_grid.addWidget(self.torque_vel_edit, row, 5)
+        row += 1
+        control_grid.addWidget(QtWidgets.QLabel("运动状态"), row, 0)
+        control_grid.addWidget(self.torque_moving_edit, row, 1)
         root.addWidget(control_group)
 
         calib_group = QtWidgets.QGroupBox("标定采样与拟合")
@@ -313,7 +340,34 @@ class ProximityCalibrationWindow(QtWidgets.QWidget):
             self.torque.connect()
             self.torque.set_servo(True)
             self.sig_log.emit("力控电机已连接")
+            self._torque_status_error_logged = False
             return self.torque
+
+    def refresh_torque_status(self):
+        if self.torque is None or not getattr(self.torque, "connected", False):
+            self.torque_pos_edit.setText("未连接")
+            self.torque_force_edit.setText("未连接")
+            self.torque_vel_edit.setText("未连接")
+            self.torque_moving_edit.setText("未连接")
+            return
+
+        try:
+            status = self.torque.read_status()
+        except Exception as exc:
+            self.torque_pos_edit.setText("读取失败")
+            self.torque_force_edit.setText("读取失败")
+            self.torque_vel_edit.setText("读取失败")
+            self.torque_moving_edit.setText("读取失败")
+            if not self._torque_status_error_logged:
+                self._append_log(f"力控电机实时状态读取失败：{exc}")
+                self._torque_status_error_logged = True
+            return
+
+        self._torque_status_error_logged = False
+        self.torque_pos_edit.setText(f"{status['position']:.3f} mm")
+        self.torque_force_edit.setText(f"{status['force']:.3f} N")
+        self.torque_vel_edit.setText(f"{status['velocity']:.3f} mm/s")
+        self.torque_moving_edit.setText("运动中" if status.get("moving") else "停止")
 
     def _wait_torque_stop(self, timeout_s: float = 60.0, vel_eps: float = 0.01):
         torque = self._ensure_torque_connected()
@@ -591,6 +645,10 @@ class ProximityCalibrationWindow(QtWidgets.QWidget):
 
     def closeEvent(self, event):
         self._running = False
+        try:
+            self.torque_status_timer.stop()
+        except Exception:
+            pass
         try:
             if self.acq_thread.is_alive():
                 self.acq_thread.join(timeout=1.0)

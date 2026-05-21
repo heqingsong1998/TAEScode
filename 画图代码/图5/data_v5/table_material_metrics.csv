@@ -1,0 +1,4 @@
+Material,No. seq.,d1 RMSE/mm,d2 RMSE/mm,d3 RMSE/mm,d4 RMSE/mm,Distance mean RMSE/mm,Pitch RMSE/deg,Roll RMSE/deg,Angle mean RMSE/deg
+Solar-Cells,33,0.052,0.049,0.048,0.055,0.051,0.143,0.069,0.106
+MLI,33,0.061,0.042,0.054,0.049,0.051,0.087,0.071,0.079
+OSRs,33,0.057,0.042,0.053,0.051,0.051,0.104,0.071,0.087

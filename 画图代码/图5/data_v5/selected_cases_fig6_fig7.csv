@@ -1,0 +1,10 @@
+Subfig.,Material,Speed/mm/s,Motion pattern,Selected file,Distance mean RMSE/mm,Pitch RMSE/deg,Roll RMSE/deg,Angle mean RMSE/deg
+(a),Solar-Cells,0.5,Pitch sweep,prediction_full_auto_dynamic_pitch_sweep_v0p5_20260507_165855.csv,0.050,0.152,0.045,0.098
+(b),Solar-Cells,0.7,Roll sweep,prediction_full_auto_dynamic_roll_sweep_v0p7_20260507_171457.csv,0.058,0.132,0.072,0.102
+(c),Solar-Cells,0.9,Pitch sine,prediction_full_auto_dynamic_pitch_sine_v0p9_20260507_172124.csv,0.052,0.084,0.043,0.064
+(d),MLI,0.5,Roll sine,prediction_full_auto_dynamic_roll_sine_v0p5_20260507_181711.csv,0.061,0.076,0.081,0.078
+(e),MLI,0.7,Two-axis sine phase 0,prediction_full_auto_dynamic_sine_phase0_v0p7_20260507_182348.csv,0.062,0.101,0.069,0.085
+(f),MLI,0.9,Two-axis sine phase 90,prediction_full_auto_dynamic_sine_phase90_v0p9_20260507_182908.csv,0.048,0.093,0.049,0.071
+(g),OSRs,0.5,Pitch-roll coupled,prediction_full_auto_dynamic_pitch_sweep_roll_sine_v0p5_20260507_183653.csv,0.056,0.161,0.088,0.124
+(h),OSRs,0.7,Diagonal same,prediction_full_auto_dynamic_diag_same_v0p7_20260507_183831.csv,0.057,0.067,0.048,0.057
+(i),OSRs,0.9,Diagonal opposite,prediction_full_auto_dynamic_diag_opposite_v0p9_20260507_184401.csv,0.046,0.086,0.046,0.066
